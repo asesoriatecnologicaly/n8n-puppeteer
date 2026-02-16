@@ -1,39 +1,33 @@
-# Dockerfile para n8n con Puppeteer en Railway
+FROM node:18-alpine
 
-FROM n8nio/n8n:latest
-
-USER root
-
-# Instalar dependencias de Chromium
+# Instalar dependencias del sistema
 RUN apk add --no-cache \
     chromium \
-    chromium-chromedriver \
     nss \
     freetype \
+    freetype-dev \
     harfbuzz \
     ca-certificates \
-    ttf-freefont \
-    nodejs \
-    npm
+    ttf-freefont
 
 # Variables de entorno para Puppeteer
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Crear directorio para n8n
+# Instalar n8n globalmente
+RUN npm install -g n8n
+
+# Instalar Puppeteer
+RUN npm install -g puppeteer@21.0.0
+
+# Directorio de trabajo
 WORKDIR /data
 
-# Instalar Puppeteer globalmente
-RUN npm install -g puppeteer@21.0.0 --unsafe-perm=true --allow-root
-
-# Dar permisos
-RUN chmod -R 755 /usr/lib/node_modules/puppeteer/.local-chromium
-
-# Volver a usuario node
+# Usuario
 USER node
 
-# Exponer puerto
+# Puerto
 EXPOSE 5678
 
-# Comando de inicio
+# Comando
 CMD ["n8n"]

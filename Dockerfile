@@ -30,4 +30,4 @@ USER node
 EXPOSE 5678
 
 # Comando
-CMD ["n8n"]
+CMD ["n8n", "start"]

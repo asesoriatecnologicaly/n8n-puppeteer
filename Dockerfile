@@ -1,11 +1,14 @@
-FROM node:18-alpine
+# Dockerfile DEFINITIVO - basado en imagen oficial de n8n
 
-# Instalar dependencias del sistema
+FROM n8nio/n8n:latest
+
+USER root
+
+# Instalar Chromium y dependencias
 RUN apk add --no-cache \
     chromium \
     nss \
     freetype \
-    freetype-dev \
     harfbuzz \
     ca-certificates \
     ttf-freefont
@@ -14,20 +17,11 @@ RUN apk add --no-cache \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Instalar n8n globalmente
-RUN npm install -g n8n
+# Instalar Puppeteer en el directorio de n8n
+RUN cd /usr/local/lib/node_modules/n8n && \
+    npm install puppeteer@21.0.0
 
-# Instalar Puppeteer
-RUN npm install -g puppeteer@21.0.0
-
-# Directorio de trabajo
-WORKDIR /data
-
-# Usuario
+# Volver a usuario node
 USER node
 
-# Puerto
-EXPOSE 5678
-
-# Comando
-CMD ["n8n", "start"]
+# El CMD ya está definido en la imagen base de n8n
